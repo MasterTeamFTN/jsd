@@ -28,30 +28,30 @@ Primer:
 ```
 // Sadrzi zajednicke atribute za vise entiteta
 fields Details:
-	created_at datetime
-	updated_at datetime
+    created_at datetime
+    updated_at datetime
 
 // Entitet fakultet ce pored svojih elemenata imati i elemente iz Details-a
 entity Fakultet copy Details:
     // Elementi mogu da imaju svoje atribute koji se navode unutar [ ]
-	id integer [pk, increment]
-	name varchar
-	city varchar
+    id integer [pk, increment]
+    name varchar
+    city varchar
 
     // Elementi koji bi bili predstavljeni preko FK-a ili medju tabelama
-	1..* Student
+    1..* Student
     1..1 Dekan
 
 entity User copy Details:
     id integer [pk]
-	ime varchar
-	prezime varchar
+    ime varchar
+    prezime varchar
 
 // Student nasledjuje klasu User, sto znaci da ce sadrzati sve njegove elemente
 // ali sa njima ce biti povezan preko FK-a
 entity Student extends User:
-	id integer [pk]
-	indeks varchar [unique]
+    id integer [pk]
+    indeks varchar [unique]
 
 entity Dekan extends User:
     id integer [pk]
