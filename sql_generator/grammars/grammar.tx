@@ -1,13 +1,29 @@
+// Root rule
+// Every program must have config line to specify database name
+// and list of structures (entities or fields)
 Program:
-    // @TODO: dodati field strukture i liniju gde se
-    // bira konkretna baza podataka
-    entities+=Entity
+    config=Config
+    structures+=Structure
+;
+
+// Config part - here user needs to specify what database he wants to use
+Config:
+    'database=' db_name=ID
+;
+
+Structure:
+    Entity | Field
 ;
 
 Entity:
     'entity' name=ID '{'
         properties+=Property
     '}'
+;
+
+Field:
+    // @TODO: Implementirati Field strukturu
+    'field'
 ;
 
 Property:

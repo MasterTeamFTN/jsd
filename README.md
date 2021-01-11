@@ -26,6 +26,8 @@ kreirati referencu (FK) na super entitet.
 
 Primer:  
 ```
+database=mysql
+
 // Sadrzi zajednicke atribute za vise entiteta
 fields Details {
     created_at datetime

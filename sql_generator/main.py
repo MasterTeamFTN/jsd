@@ -34,9 +34,11 @@ def main(model_filename, debug=False):
     # Build a model from fakultet.sg file
     model = mm.model_from_file(model_filename)
 
+    database_name = model.config.db_name
+
     # Generate SQL code
     with open(join(srcgen_folder, "create_db_schema.sql"), 'w') as f:
-        f.write(template.render(entities=model.entities))
+        f.write(template.render(entities=model.structures, database_name=database_name))
 
 
 if __name__ == "__main__":

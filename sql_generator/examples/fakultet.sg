@@ -1,3 +1,5 @@
+database=mysql
+
 entity Fakultet {
     name varchar
     city varchar
