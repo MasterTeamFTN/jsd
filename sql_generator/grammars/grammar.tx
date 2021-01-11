@@ -1,0 +1,16 @@
+Program:
+    // @TODO: dodati field strukture i liniju gde se
+    // bira konkretna baza podataka
+    entities+=Entity
+;
+
+Entity:
+    'entity' name=ID '{'
+        properties+=Property
+    '}'
+;
+
+Property:
+    // @TODO: dodati i listu atrbiruta 
+    name=ID type=ID
+;

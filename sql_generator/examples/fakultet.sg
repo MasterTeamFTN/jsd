@@ -1,4 +1,9 @@
-entity Fakultet:
-    id integer [pk]
+entity Fakultet {
     name varchar
     city varchar
+}
+
+entity Student {
+    id integer
+    indeks integer
+}

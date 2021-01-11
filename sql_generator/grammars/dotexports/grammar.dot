@@ -1,0 +1,25 @@
+
+    digraph textX {
+    fontname = "Bitstream Vera Sans"
+    fontsize = 8
+    node[
+        shape=record,
+        style=filled,
+        fillcolor=aliceblue
+    ]
+    nodesep = 0.3
+    edge[dir=black,arrowtail=empty]
+
+
+16152632[ label="{Program|}"]
+
+16276824[ label="{Entity|name: ID\l}"]
+
+16352264[ label="{Property|name: ID\ltype: ID\l}"]
+
+
+
+16152632 -> 16276824[arrowtail=diamond, dir=both, headlabel="entities 1..*"]
+16276824 -> 16352264[arrowtail=diamond, dir=both, headlabel="properties 1..*"]
+
+}
