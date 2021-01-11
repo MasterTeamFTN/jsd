@@ -1,0 +1,4 @@
+entity Fakultet:
+    id integer [pk]
+    name varchar
+    city varchar
