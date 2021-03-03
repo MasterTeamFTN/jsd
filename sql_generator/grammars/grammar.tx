@@ -27,6 +27,21 @@ Field:
 ;
 
 Property:
-    // @TODO: dodati i listu atrbiruta 
-    name=ID type=ID
+    name=ID type=ID constraints=PropertyConstraints?
+;
+
+PropertyConstraints:
+    '[' constraints+=Constraint ']'
+;
+
+Constraint:
+    PrimaryKeyConstraint | NotNullConstraint | UniqueConstraint
+;
+
+PrimaryKeyConstraint: 'pk';
+NotNullConstraint: 'notnull';
+UniqueConstraint: 'unique';
+
+Comment:
+  /\/\/.*$/
 ;
