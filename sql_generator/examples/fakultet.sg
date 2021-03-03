@@ -1,6 +1,11 @@
 database=mysql
 
-entity Fakultet {
+fields MyFields {
+    hello varchar
+    name varchar
+}
+
+entity Fakultet copy MyFields {
     name varchar
     city varchar
 }

@@ -12,6 +12,19 @@ def get_mm():
     """
     return metamodel_from_file(join(this_folder, 'grammars', 'grammar.tx'))
 
+'''
+    method used to extract properties from copy attribute of structure
+    and place them into structure.properties
+'''
+def copyProperties(structure):
+    if structure.copy is not None:
+        propertiesToCopy = structure.copy.properties
+
+        for prop in propertiesToCopy:
+            if any(property.name == prop.name for property in structure.properties):
+                prop.name = prop.name + "_copied"
+            structure.properties.append(prop)
+
 def main(model_filename, debug=False):
     # Instantiate meta-model
     mm = get_mm()
@@ -29,12 +42,19 @@ def main(model_filename, debug=False):
 
     # Load template
     template_path = join('templates', 'sql_create.template')
-    template = jinja_env.get_template(template_path)
+    template = jinja_env.get_template('templates/sql_create.template')
 
     # Build a model from fakultet.sg file
     model = mm.model_from_file(model_filename)
 
     database_name = model.config.db_name
+
+    # copy fields
+    for structure in model.structures:
+        if hasattr(structure, 'copy'):
+            copyProperties(structure)
+    model.structures = list(filter(lambda x: x._tx_fqn != "grammar.Field", model.structures))
+
 
     # Generate SQL code
     with open(join(srcgen_folder, "create_db_schema.sql"), 'w') as f:
