@@ -5,14 +5,10 @@ import jinja2
 from textx import metamodel_from_file
 from models import Entity, Property
 from utils import get_current_time
+from mappings import constraints
+from validators import check_duplicate_constraints, check_multiple_entity_names, check_multiple_pk, check_multiple_property_name
 
 this_folder = dirname(__file__)
-
-constraints = {
-    'pk': 'PRIMARY KEY',
-    'notnull': 'NOT NULL',
-    'unique': 'UNIQUE'
-}
 
 def get_mm():
     """
@@ -20,8 +16,11 @@ def get_mm():
     """
     return metamodel_from_file(join(this_folder, 'grammars', 'grammar.tx'))
 
+
 def init_template_engine(path):
-    # Initialize the template engine.
+    """
+    Initialize jinja template engine
+    """
     jinja_env = jinja2.Environment(
         loader=jinja2.FileSystemLoader(this_folder),
         trim_blocks=True,
@@ -47,19 +46,29 @@ def main(model_filename, debug=False):
     # Build a model from input file
     model = mm.model_from_file(model_filename)
 
-
     database_name = model.config.db_name
+    # TODO: check here if we support this database
+    # You can check if model.config.db_name exists
+    # as a key of types dictionary, or something like that
 
     entities = []
 
     for structure in model.structures:
         if structure.__class__.__name__ == 'Entity':
+            if check_multiple_entity_names(structure.name, entities):
+                print(f'Error - Entity with name \'{structure.name}\' already exists')
+                return
+
             entity = Entity(structure.name)
             entities.append(entity)
 
             for prop in structure.properties:
+                if check_multiple_property_name(prop.name, entity.properties):
+                    print(f'Error - Property \'{prop.name}\' of entity \'{entity.name}\' already exists.')
+                    return
+
                 p = Property(prop.name, prop.type)
-                entity.properties.append(p)
+                entity.add_property(p)
 
                 if prop.constraints != None:
                     for constraint in prop.constraints.constraints:
@@ -92,41 +101,7 @@ def main(model_filename, debug=False):
         )
 
 
-def check_duplicate_constraints(entities):
-    """
-    Checks all properties to see whether there are duplicate
-    constraints on specific property
-    Returns status, and entity and prop if error exists
-    """
-    for entity in entities:
-        for prop in entity.properties:
-            if len(prop.constraints) != len(set(prop.constraints)):
-                return True, entity, prop
-
-    return False, None, prop
-
-
-def check_multiple_pk(entities):
-    """
-    Checks if there are multiple primary keys in one entity
-    Returns status and entity if error exists
-    """
-    for entity in entities:
-        # Collect all properties from 1 entity 
-        constraints = []
-
-        for prop in entity.properties:
-            for constraint in prop.constraints:
-                constraints.append(constraint)
-
-        # Duplicated exist
-        if len(constraints) != len(set(constraints)):
-            return True, entity
-
-    return False, None
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     if len(sys.argv) != 2:
         print('Enter file name as first parameter')
         exit(1)
