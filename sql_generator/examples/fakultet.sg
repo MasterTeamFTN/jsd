@@ -1,16 +1,17 @@
 database=mysql
 
 fields MyFields {
-    hello varchar
-    name varchar
+    hello varchar [unique]
+    naziv varchar
 }
 
 entity Fakultet copy MyFields {
-    name varchar
-    city varchar
+    naziv varchar [pk]
+    godina_osnivanja number [unique notnull]
+    grad varchar [notnull]
 }
 
 entity Student {
-    id integer
+    id integer [pk]
     indeks integer
 }

@@ -32,18 +32,18 @@ def init_template_engine(path):
     return jinja_env.get_template(template_path)
 
 
-def copyProperties(structure):
+def copy_properties(entity):
     """
-    method used to extract properties from copy attribute of structure
-    and place them into structure.properties
+    Method used to extract properties from copy attribute of entity structure
+    and place them into entity.properties
     """
-    if structure.copy is not None:
-        propertiesToCopy = structure.copy.properties
+    if entity.copy is not None:
+        properties_to_copy = entity.copy.properties
 
-        for prop in propertiesToCopy:
-            if any(property.name == prop.name for property in structure.properties):
-                prop.name = prop.name + "_copied"
-            structure.properties.append(prop)
+        for prop in properties_to_copy:
+            if any(property.name == prop.name for property in entity.properties):
+                prop.name = prop.name + '_copied'
+            entity.properties.append(prop)
 
 
 def main(model_filename, debug=False):
@@ -68,30 +68,31 @@ def main(model_filename, debug=False):
     entities = []
 
     for structure in model.structures:
-        if structure.__class__.__name__ == 'Entity':
-            if check_multiple_entity_names(structure.name, entities):
-                print(f'Error - Entity with name \'{structure.name}\' already exists')
+        if structure.__class__.__name__ != 'Entity':
+            continue
+
+        if check_multiple_entity_names(structure.name, entities):
+            print(f'Error - Entity with name \'{structure.name}\' already exists')
+            return
+
+        # Handle fields and copy 
+        if hasattr(structure, 'copy'):
+            copy_properties(structure)
+
+        entity = Entity(structure.name)
+        entities.append(entity)
+
+        for prop in structure.properties:
+            if check_multiple_property_name(prop.name, entity.properties):
+                print(f'Error - Property \'{prop.name}\' of entity \'{entity.name}\' already exists.')
                 return
 
-            entity = Entity(structure.name)
-            entities.append(entity)
+            p = Property(prop.name, prop.type)
+            entity.add_property(p)
 
-            for prop in structure.properties:
-                if check_multiple_property_name(prop.name, entity.properties):
-                    print(f'Error - Property \'{prop.name}\' of entity \'{entity.name}\' already exists.')
-                    return
-
-                p = Property(prop.name, prop.type)
-                entity.add_property(p)
-
-                if prop.constraints != None:
-                    for constraint in prop.constraints.constraints:
-                        p.constraints.append(constraints[constraint])
-
-        else: # 'Field'
-            # @TODO: Finish this
-            pass
-
+            if prop.constraints != None:
+                for constraint in prop.constraints.constraints:
+                    p.constraints.append(constraints[constraint])
     
     # Validate constraints
     status, entity, prop = check_duplicate_constraints(entities)
@@ -103,13 +104,6 @@ def main(model_filename, debug=False):
     if status:
         print(f'Error - Entity \'{entity.name}\' has more than one primary key')
         return
-
-    # copy fields
-    for structure in model.structures:
-        if hasattr(structure, 'copy'):
-            copyProperties(structure)
-    model.structures = list(filter(lambda x: x._tx_fqn != "grammar.Field", model.structures))
-
 
     # Generate SQL code
     with open(join(srcgen_folder, "create_db_schema.sql"), 'w') as f:
