@@ -6,24 +6,26 @@ Program:
     structures+=Structure
 ;
 
+
 // Config part - here user needs to specify what database he wants to use
 Config:
     'database=' db_name=ID
 ;
 
 Structure:
-    Entity | Field
+    Entity | Field 
 ;
 
 Entity:
-    'entity' name=ID '{'
+    'entity' name=ID ('copy' copy=[Field])? '{'
         properties+=Property
     '}'
 ;
 
 Field:
-    // @TODO: Implementirati Field strukturu
-    'field'
+    'fields' name=ID '{'
+        properties+=Property
+    '}'
 ;
 
 Property:

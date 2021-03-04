@@ -32,6 +32,20 @@ def init_template_engine(path):
     return jinja_env.get_template(template_path)
 
 
+def copyProperties(structure):
+    """
+    method used to extract properties from copy attribute of structure
+    and place them into structure.properties
+    """
+    if structure.copy is not None:
+        propertiesToCopy = structure.copy.properties
+
+        for prop in propertiesToCopy:
+            if any(property.name == prop.name for property in structure.properties):
+                prop.name = prop.name + "_copied"
+            structure.properties.append(prop)
+
+
 def main(model_filename, debug=False):
     # Instantiate meta-model
     mm = get_mm()
@@ -89,6 +103,13 @@ def main(model_filename, debug=False):
     if status:
         print(f'Error - Entity \'{entity.name}\' has more than one primary key')
         return
+
+    # copy fields
+    for structure in model.structures:
+        if hasattr(structure, 'copy'):
+            copyProperties(structure)
+    model.structures = list(filter(lambda x: x._tx_fqn != "grammar.Field", model.structures))
+
 
     # Generate SQL code
     with open(join(srcgen_folder, "create_db_schema.sql"), 'w') as f:
