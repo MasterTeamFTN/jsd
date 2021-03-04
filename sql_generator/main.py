@@ -17,18 +17,18 @@ def get_mm():
     return metamodel_from_file(join(this_folder, 'grammars', 'grammar.tx'))
 
 
-def init_template_engine(path):
+def init_template_engine(path, template_name):
     """
     Initialize jinja template engine
     """
     jinja_env = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(this_folder),
+        loader=jinja2.FileSystemLoader(path),
         trim_blocks=True,
         lstrip_blocks=True
     )
 
     # Load template
-    template_path = join('templates', 'sql_create.template')
+    template_path = join('templates', template_name)
     return jinja_env.get_template(template_path)
 
 
@@ -55,7 +55,7 @@ def main(model_filename, debug=False):
     if not exists(srcgen_folder):
         mkdir(srcgen_folder)
 
-    template = init_template_engine(this_folder)
+    sql_template = init_template_engine(this_folder, 'sql_create.template')
 
     # Build a model from input file
     model = mm.model_from_file(model_filename)
@@ -108,12 +108,25 @@ def main(model_filename, debug=False):
     # Generate SQL code
     with open(join(srcgen_folder, "create_db_schema.sql"), 'w') as f:
         f.write(
-            template.render(
+            sql_template.render(
                 entities=entities, 
                 database_name=database_name,
                 time=get_current_time()
             )
         )
+
+    # Generate dot
+    dot_template = init_template_engine(this_folder, 'dot_create.template')
+    
+    with open(join(srcgen_folder, 'er_diagram.dot'), 'w') as f:
+        f.write(
+            dot_template.render(
+                entities=entities,
+                database_name=database_name,
+                time=get_current_time()
+            )
+        )
+
 
 
 if __name__ == '__main__':
