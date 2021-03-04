@@ -5,6 +5,8 @@
 CREATE TABLE Fakultet (
     name varchar,
     city varchar,
+    hello varchar,
+    name_copied varchar,
 );
 
 
