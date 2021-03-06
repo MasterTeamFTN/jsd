@@ -29,7 +29,10 @@ Field:
 ;
 
 Property:
-    name=ID type=ID constraints=PropertyConstraints?
+    name=ID type=ID constraints=PropertyConstraints? |
+    '1..*' oneToMany=[Entity] |
+    '*..1' manyToOne=[Entity] |
+    '*..*' manyToMany=[Entity]
 ;
 
 PropertyConstraints:
@@ -43,6 +46,10 @@ Constraint:
 PrimaryKeyConstraint: 'pk';
 NotNullConstraint: 'notnull';
 UniqueConstraint: 'unique';
+
+ManyToMany: '*..*';
+OneToMany: '1..*';
+ManyToOne: '*..1';
 
 Comment:
   /\/\/.*$/
