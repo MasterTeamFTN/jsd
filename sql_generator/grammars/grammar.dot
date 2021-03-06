@@ -1,0 +1,41 @@
+
+    digraph textX {
+    fontname = "Bitstream Vera Sans"
+    fontsize = 8
+    node[
+        shape=record,
+        style=filled,
+        fillcolor=aliceblue
+    ]
+    nodesep = 0.3
+    edge[dir=black,arrowtail=empty]
+
+
+3076135168504[ label="{Program|}"]
+
+3076135165672[ label="{Fields|name: ID\l}"]
+
+3076135171336[ label="{Config|db_name: ID\l}"]
+
+3076135174168[ label="{*Structure|}"]
+
+3076135177944[ label="{Entity|name: ID\l}"]
+
+3076135184552[ label="{Property|name: ID\ltype: ID\l}"]
+
+
+
+3076135168504 -> 3076135171336[arrowtail=diamond, dir=both, headlabel="config "]
+3076135168504 -> 3076135174168[arrowtail=diamond, dir=both, headlabel="structures 1..*"]
+3076135165672 -> 3076135184552[arrowtail=diamond, dir=both, headlabel="properties 1..*"]
+3076135174168 -> 3076135177944 [dir=back]
+3076135177944 -> 3076135165672[headlabel="copy "]
+3076135177944 -> 3076135184552[arrowtail=diamond, dir=both, headlabel="properties 1..*"]
+match_rules [ shape=plaintext, label=< <table>
+	<tr>
+		<td><b>Field</b></td><td>field</td>
+	</tr>
+</table> >]
+
+
+}
