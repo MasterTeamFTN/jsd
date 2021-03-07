@@ -31,12 +31,12 @@ Field:
 Property:
     name=ID type=ID constraints=PropertyConstraints? |
     OneToOne oneToOne=[Entity] |
-    OneToMany oneToMany=[Entity] |
+    OneToMany oneToMany=[Entity] name=ID |
     ManyToMany manyToMany=[Entity]
 ;
 
-OneToOne: '1..1';
-OneToMany: '1..*';
+OneToOne:   '1..1';
+OneToMany:  '1..*';
 ManyToMany: '*..*';
 
 PropertyConstraints:
@@ -48,8 +48,8 @@ Constraint:
 ;
 
 PrimaryKeyConstraint: 'pk';
-NotNullConstraint: 'notnull';
-UniqueConstraint: 'unique';
+NotNullConstraint:    'notnull';
+UniqueConstraint:     'unique';
 
 Comment:
   /\/\/.*$/

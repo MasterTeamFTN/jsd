@@ -9,8 +9,6 @@ digraph ER_Diagram {
 
     {% for entity in entities %}
 
-    // TODO: add FK flag
-
     "{{ entity.name }}" [
         shape = "record"
         label = "<{{ entity.name }}> {{ entity.name }}|
@@ -25,6 +23,11 @@ digraph ER_Diagram {
                     {{ constraint }}
                 {% endif %}
             {% endfor %}
+            \l
+        {% endfor %}
+
+        {% for relation in entity.relations %}
+            {{ relation.property_name }} FK
             \l
         {% endfor %}
         "

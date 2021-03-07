@@ -98,8 +98,9 @@ def manage_relations(structure, entities):
         elif property.oneToMany is not None:
             main_entity = find_entity(structure.name, entities)
             related_entity = find_entity(property.oneToMany.name, entities)
+            
             main_entity_pk_property = findPkProperty(structure.properties)
-            name = f'{related_entity.name}_{main_entity.name}_id'.lower()
+            name = f'{main_entity.name}_{main_entity_pk_property.name}_{property.name}'.lower()
             
             relation = Relation(name, main_entity_pk_property.type, main_entity.name, main_entity_pk_property.name)
             related_entity.add_relation(relation)
