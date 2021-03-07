@@ -3,7 +3,7 @@ from os import mkdir
 from os.path import exists, dirname, join
 import jinja2
 from textx import metamodel_from_file
-from models import Entity, Property
+from models import Entity, Property, Relation
 from utils import get_current_time
 from mappings import constraints
 from validators import check_duplicate_constraints, check_multiple_entity_names, check_multiple_pk, check_multiple_property_name
@@ -52,25 +52,31 @@ def findPkProperty(properties):
 
 def copy_constraints(property_from, property_to):
     '''
-        Method used to copy all the constraints from property_from to property_to, EXCEPT constraint pk
+    Method used to copy all the constraints from property_from to property_to, EXCEPT constraint pk
     '''
     if property_from.constraints is not None:
         for constraint in property_from.constraints.constraints:
             if constraint != 'pk':
                 property_to.constraints.append(constraints[constraint])
 
+def find_entity(name, entities):
+    for entity in entities:
+        if entity.name == name:
+            return entity
+
+    return None
 
 def manage_relations(structure, entities):
     '''
-        Method used to manage all the manyTomany, Todo: oneToMany, ManyToOne
-        properties of a structure by removing them and creating inter table if needed
+    Method used to manage all the manyTomany, Todo: oneToMany, ManyToOne
+    properties of a structure by removing them and creating inter table if needed
     '''
     non_relation_properties = []
 
     for property in structure.properties:
         if property.manyToMany is not None:
             '''
-                Handling many to many property
+            Handling many to many property
             '''
             ftProp = findPkProperty(structure.properties)
             firstProperty = Property(structure.name.lower() + "_" + ftProp.name, ftProp.type)
@@ -89,12 +95,17 @@ def manage_relations(structure, entities):
             entity.properties.append(secondProperty)
             entities.append(entity)
 
-
         elif property.oneToMany is not None:
-            # Todo: implement one to many relation
-            pass
+            main_entity = find_entity(structure.name, entities)
+            related_entity = find_entity(property.oneToMany.name, entities)
+            
+            main_entity_pk_property = findPkProperty(structure.properties)
+            name = f'{main_entity.name}_{main_entity_pk_property.name}_{property.name}'.lower()
+            
+            relation = Relation(name, main_entity_pk_property.type, main_entity.name, main_entity_pk_property.name)
+            related_entity.add_relation(relation)
 
-        elif property.manyToOne is not None:
+        elif property.oneToOne is not None:
             # Todo: implement many to one relation
             pass
 
@@ -138,10 +149,10 @@ def main(model_filename, debug=False):
         if hasattr(structure, 'copy'):
             copy_properties(structure)
 
-        structure.properties = manage_relations(structure, entities)
-
         entity = Entity(structure.name)
         entities.append(entity)
+
+        structure.properties = manage_relations(structure, entities)
 
         for prop in structure.properties:
             if check_multiple_property_name(prop.name, entity.properties):

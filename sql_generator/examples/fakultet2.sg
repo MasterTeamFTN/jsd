@@ -1,0 +1,15 @@
+database=mysql
+
+entity Student {
+    id number [pk]
+    indeks varchar [unique notnull]
+    ime varchar
+    prezime varchar
+}
+
+entity Fakultet {
+    id varchar [pk]
+    naziv varchar
+    1..* Student prvazeljazaupis
+    1..* Student drugazeljazaupis
+}
