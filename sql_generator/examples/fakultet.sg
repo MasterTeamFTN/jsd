@@ -11,7 +11,14 @@ entity Fakultet copy MyFields {
     grad varchar [notnull]
 }
 
+entity Predmet {
+    naziv varchar [pk]
+    broj_bodova number [notnull]
+}
+
 entity Student {
     id integer [pk]
     indeks integer
+    *..* Fakultet
+    *..* Predmet
 }

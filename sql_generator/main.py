@@ -45,6 +45,65 @@ def copy_properties(entity):
                 prop.name = prop.name + '_copied'
             entity.properties.append(prop)
 
+def findPkProperty(properties):
+    for prop in properties:
+        if 'pk' in prop.constraints.constraints:
+            return prop
+
+def copy_constraints(property_from, property_to):
+    '''
+        Method used to copy all the constraints from property_from to property_to, EXCEPT constraint pk
+    '''
+    if property_from.constraints is not None:
+        for constraint in property_from.constraints.constraints:
+            if constraint != 'pk':
+                property_to.constraints.append(constraints[constraint])
+
+
+def manage_relations(structure, entities):
+    '''
+        Method used to manage all the manyTomany, Todo: oneToMany, ManyToOne
+        properties of a structure by removing them and creating inter table if needed
+    '''
+    non_relation_properties = []
+
+    for property in structure.properties:
+        if property.manyToMany is not None:
+            '''
+                Handling many to many property
+            '''
+            ftProp = findPkProperty(structure.properties)
+            firstProperty = Property(structure.name.lower() + "_" + ftProp.name, ftProp.type)
+            copy_constraints(ftProp, firstProperty)
+
+            stProp = findPkProperty(property.manyToMany.properties)
+            secondProperty = Property(property.manyToMany.name.lower() + "_" + stProp.name, stProp.type)
+            copy_constraints(stProp, secondProperty)
+
+            idProperty = Property('id', 'number')
+            idProperty.constraints.append('PRIMARY KEY')
+
+            entity = Entity(structure.name + "_" + property.manyToMany.name)
+            entity.properties.append(idProperty)
+            entity.properties.append(firstProperty)
+            entity.properties.append(secondProperty)
+            entities.append(entity)
+
+
+        elif property.oneToMany is not None:
+            # Todo: implement one to many relation
+            pass
+
+        elif property.manyToOne is not None:
+            # Todo: implement many to one relation
+            pass
+
+        elif property not in non_relation_properties:
+            non_relation_properties.append(property)
+
+    return non_relation_properties
+
+
 
 def main(model_filename, debug=False):
     # Instantiate meta-model
@@ -78,6 +137,8 @@ def main(model_filename, debug=False):
         # Handle fields and copy 
         if hasattr(structure, 'copy'):
             copy_properties(structure)
+
+        structure.properties = manage_relations(structure, entities)
 
         entity = Entity(structure.name)
         entities.append(entity)
@@ -117,7 +178,7 @@ def main(model_filename, debug=False):
 
     # Generate dot
     dot_template = init_template_engine(this_folder, 'dot_create.template')
-    
+
     with open(join(srcgen_folder, 'er_diagram.dot'), 'w') as f:
         f.write(
             dot_template.render(
