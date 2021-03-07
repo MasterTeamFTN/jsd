@@ -30,10 +30,14 @@ Field:
 
 Property:
     name=ID type=ID constraints=PropertyConstraints? |
-    '1..*' oneToMany=[Entity] |
-    '*..1' manyToOne=[Entity] |
-    '*..*' manyToMany=[Entity]
+    OneToOne oneToOne=[Entity] |
+    OneToMany oneToMany=[Entity] |
+    ManyToMany manyToMany=[Entity]
 ;
+
+OneToOne: '1..1';
+OneToMany: '1..*';
+ManyToMany: '*..*';
 
 PropertyConstraints:
     '[' constraints+=Constraint ']'
@@ -46,10 +50,6 @@ Constraint:
 PrimaryKeyConstraint: 'pk';
 NotNullConstraint: 'notnull';
 UniqueConstraint: 'unique';
-
-ManyToMany: '*..*';
-OneToMany: '1..*';
-ManyToOne: '*..1';
 
 Comment:
   /\/\/.*$/

@@ -5,15 +5,16 @@
 {% for entity in entities -%}
 
 CREATE TABLE {{ entity.name }} (
-    {% for property in entity.properties %}
+{% for property in entity.properties %}
     {{ property.name }} {{ property.type }} 
-        {% for constraint in property.constraints %}
-            {{ constraint }}
-        {% endfor %}
-        {%- if not loop.last %}
-            ,
-        {% endif %}
-    {% endfor %}
+        {%- for constraint in property.constraints -%}
+            {{ " " + constraint }}
+        {%- endfor -%},
+{% endfor -%}
+
+{% for relation in entity.relations %}
+    {{ relation.property_name }} {{ relation.property_type }} FOREIGN KEY REFERENCES {{ relation.related_entity_name }}({{ relation.related_entity_pk }}),
+{% endfor %}
 );
 
 {% endfor %}
