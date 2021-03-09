@@ -29,7 +29,8 @@ def init_template_engine(path, template_name):
 
     # Load template
     template_path = join('templates', template_name)
-    return jinja_env.get_template(template_path)
+    # return jinja_env.get_template(template_path)
+    return jinja_env.get_template('templates/' + template_name)
 
 
 def copy_properties(entity):
@@ -45,19 +46,11 @@ def copy_properties(entity):
                 prop.name = prop.name + '_copied'
             entity.properties.append(prop)
 
-def findPkProperty(properties):
+def find_pk_property(properties):
     for prop in properties:
         if 'pk' in prop.constraints.constraints:
             return prop
 
-def copy_constraints(property_from, property_to):
-    '''
-    Method used to copy all the constraints from property_from to property_to, EXCEPT constraint pk
-    '''
-    if property_from.constraints is not None:
-        for constraint in property_from.constraints.constraints:
-            if constraint != 'pk':
-                property_to.constraints.append(constraints[constraint])
 
 def find_entity(name, entities):
     for entity in entities:
@@ -68,7 +61,7 @@ def find_entity(name, entities):
 
 def manage_relations(structure, entities):
     '''
-    Method used to manage all the manyTomany, Todo: oneToMany, ManyToOne
+    Method used to manage all the manyTomany, oneToMany Todo: ManyToOne
     properties of a structure by removing them and creating inter table if needed
     '''
     non_relation_properties = []
@@ -78,28 +71,31 @@ def manage_relations(structure, entities):
             '''
             Handling many to many property
             '''
-            ftProp = findPkProperty(structure.properties)
-            firstProperty = Property(structure.name.lower() + "_" + ftProp.name, ftProp.type)
-            copy_constraints(ftProp, firstProperty)
+            ftProp = find_pk_property(structure.properties)
+            stProp = find_pk_property(property.manyToMany.properties)
 
-            stProp = findPkProperty(property.manyToMany.properties)
-            secondProperty = Property(property.manyToMany.name.lower() + "_" + stProp.name, stProp.type)
-            copy_constraints(stProp, secondProperty)
+            ftEntityName = structure.name
+            stEntityName = property.manyToMany.name
 
-            idProperty = Property('id', 'number')
-            idProperty.constraints.append('PRIMARY KEY')
 
             entity = Entity(structure.name + "_" + property.manyToMany.name)
-            entity.properties.append(idProperty)
-            entity.properties.append(firstProperty)
-            entity.properties.append(secondProperty)
+            # idProperty = Property('id', 'number')
+            # idProperty.constraints.append('PRIMARY KEY')
+            # entity.properties.append(idProperty)
+
+            firstRelation = Relation(f'{ftEntityName}_{ftProp.name}'.lower(), ftProp.type, ftEntityName, ftProp.name)
+            entity.add_relation(firstRelation)
+
+            secondRelation = Relation(f'{stEntityName}_{stProp.name}'.lower(), stProp.type, stEntityName, stProp.name)
+            entity.add_relation(secondRelation)
+
             entities.append(entity)
 
         elif property.oneToMany is not None:
             main_entity = find_entity(structure.name, entities)
             related_entity = find_entity(property.oneToMany.name, entities)
             
-            main_entity_pk_property = findPkProperty(structure.properties)
+            main_entity_pk_property = find_pk_property(structure.properties)
             name = f'{main_entity.name}_{main_entity_pk_property.name}_{property.name}'.lower()
             
             relation = Relation(name, main_entity_pk_property.type, main_entity.name, main_entity_pk_property.name)
@@ -162,7 +158,7 @@ def main(model_filename, debug=False):
             p = Property(prop.name, prop.type)
             entity.add_property(p)
 
-            if prop.constraints != None:
+            if prop.constraints is not None:
                 for constraint in prop.constraints.constraints:
                     p.constraints.append(constraints[constraint])
     
