@@ -1,0 +1,27 @@
+database=mysql
+
+entity Student {
+    id varchar [pk]
+    firstName varchar
+    lastName varchar
+}
+
+entity Group {
+    id varchar [pk]
+    name varchar [unique notnull]
+    1..* Student student
+}
+
+entity Subject {
+    id varchar [pk]
+    title varchar [unique notnull]
+    *..* Group
+}
+
+entity Mark {
+    id varchar [pk]
+    date datetime
+    mark number
+    1..* Student student
+    1..* Subject subject
+}

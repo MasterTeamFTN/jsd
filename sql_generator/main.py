@@ -3,7 +3,7 @@ from os import mkdir
 from os.path import exists, dirname, join
 import jinja2
 from textx import metamodel_from_file
-from models import Entity, Property, Relation
+from models import Entity, Property, Relation, ONE_TO_MANY, MANY_TO_MANY
 from utils import get_current_time
 from mappings import constraints
 from validators import check_duplicate_constraints, check_multiple_entity_names, check_multiple_pk, check_multiple_property_name
@@ -83,10 +83,10 @@ def manage_relations(structure, entities):
             # idProperty.constraints.append('PRIMARY KEY')
             # entity.properties.append(idProperty)
 
-            firstRelation = Relation(f'{ftEntityName}_{ftProp.name}'.lower(), ftProp.type, ftEntityName, ftProp.name)
+            firstRelation = Relation(f'{ftEntityName}_{ftProp.name}'.lower(), ftProp.type, ftEntityName, ftProp.name, MANY_TO_MANY)
             entity.add_relation(firstRelation)
 
-            secondRelation = Relation(f'{stEntityName}_{stProp.name}'.lower(), stProp.type, stEntityName, stProp.name)
+            secondRelation = Relation(f'{stEntityName}_{stProp.name}'.lower(), stProp.type, stEntityName, stProp.name, MANY_TO_MANY)
             entity.add_relation(secondRelation)
 
             entities.append(entity)
@@ -98,7 +98,7 @@ def manage_relations(structure, entities):
             main_entity_pk_property = find_pk_property(structure.properties)
             name = f'{main_entity.name}_{main_entity_pk_property.name}_{property.name}'.lower()
             
-            relation = Relation(name, main_entity_pk_property.type, main_entity.name, main_entity_pk_property.name)
+            relation = Relation(name, main_entity_pk_property.type, main_entity.name, main_entity_pk_property.name, ONE_TO_MANY)
             related_entity.add_relation(relation)
 
         elif property.oneToOne is not None:
