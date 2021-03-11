@@ -2,16 +2,18 @@
 // Time: {{ time }}
 // Database: {{ database_name }}
 
-digraph ER_Diagram {
+strict digraph ER_Diagram {
 
-    graph [rankdir = "LR" ];
-    ranksep=1;
+    //graph [rankdir = "LR" ];
+    ranksep=0.5;
+    concentrate=true;
 
     {% for entity in entities %}
 
     "{{ entity.name }}" [
         shape = "record"
-        label = "<{{ entity.name }}> {{ entity.name }}|
+        
+        label = "{<{{ entity.name }}> {{ entity.name }}|
         {% for property in entity.properties %}
             {{ property.name }} {{ property.type }} 
             {% if 'PRIMARY KEY' in property.constraints %}
@@ -30,12 +32,37 @@ digraph ER_Diagram {
             {{ relation.property_name }} FK
             \l
         {% endfor %}
-        "
+        }"
     ];
 
     {% endfor %}
 
+
     // TODO: Add relationships
+    // Relations between entities
+    {% for entity in entities %}
+        {% for relation in entity.relations %}
+            "{{ entity.name }}"->"{{ relation.related_entity_name }}" 
+
+            {% if relation.type == 'one-to-many' %}
+                [arrowhead=crow];
+            {% elif relation.type == 'many-to-many' %}
+                [arrowhead=crow];
+            {% elif relation.type == 'one-to-one' %}
+                [arrowhead=tee];
+            {% endif %}
+
+            "{{ relation.related_entity_name }}"->"{{ entity.name }}"
+            {% if relation.type == 'one-to-many' %}
+                [arrowhead=tee];
+            {% elif relation.type == 'many-to-many' %}
+                [arrowhead=none];
+            {% elif relation.type == 'one-to-one' %}
+                [arrowhead=tee];
+            {% endif %}
+
+        {% endfor %}
+    {% endfor %}
 
     // Note card with basic information about ER diagram
     "Info" [

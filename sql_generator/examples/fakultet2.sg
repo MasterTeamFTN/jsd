@@ -5,6 +5,12 @@ entity Student {
     indeks varchar [unique notnull]
     ime varchar
     prezime varchar
+    *..* Predmet
+}
+
+entity Predmet {
+    naziv varchar [pk]
+    opis varchar [notnull]
 }
 
 entity Fakultet {
