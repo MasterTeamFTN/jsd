@@ -32,11 +32,13 @@ Property:
     name=ID type=ID constraints=PropertyConstraints? |
     OneToOne oneToOne=[Entity] |
     OneToMany oneToMany=[Entity] name=ID |
+    ManyToOne manyToOne=[Entity] name=ID |
     ManyToMany manyToMany=[Entity]
 ;
 
 OneToOne:   '1..1';
 OneToMany:  '1..*';
+ManyToOne:  '*..1';
 ManyToMany: '*..*';
 
 PropertyConstraints:
