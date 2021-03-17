@@ -3,7 +3,7 @@ from os.path import exists, dirname, join
 
 from textx import metamodel_from_file
 from models import Entity, Property, Relation, ONE_TO_MANY, MANY_TO_MANY
-from utils import get_current_time, find_pk_property, find_entity
+from utils import get_current_time, find_pk_property, find_entity, write_to_file
 from mappings import constraints
 from validators import check_duplicate_constraints, check_multiple_entity_names, check_multiple_pk, check_multiple_property_name
 from command_line import CommandLine
@@ -31,8 +31,6 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
     if not exists(srcgen_folder):
         mkdir(srcgen_folder)
 
-    sql_template = init_template_engine(this_folder, 'sql_create.template')
-
     # Build a model from input file
     model = mm.model_from_file(model_filename)
 
@@ -43,6 +41,7 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
 
     entities = []
 
+    # First pass - create entities and basic properties
     for structure in model.structures:
         if structure.__class__.__name__ != 'Entity':
             continue
@@ -58,9 +57,11 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
         entity = Entity(structure.name)
         entities.append(entity)
 
-        structure.properties = manage_relations(structure, entities)
-
         for prop in structure.properties:
+            # TODO: add here prop.manyToOne if needed
+            if prop.oneToMany or prop.manyToMany or prop.oneToOne:
+                continue
+
             if check_multiple_property_name(prop.name, entity.properties):
                 print(f'Error - Property \'{prop.name}\' of entity \'{entity.name}\' already exists.')
                 return
@@ -72,6 +73,12 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
                 for constraint in prop.constraints.constraints:
                     p.constraints.append(constraints[constraint])
     
+    # Second pass - create relations
+    for structure in model.structures:
+        if structure.__class__.__name__ == 'Entity':
+            structure.properties = manage_relations(structure, entities)
+
+
     # Validate constraints
     status, entity, prop = check_duplicate_constraints(entities)
     if status:
@@ -85,28 +92,27 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
 
     # Generate SQL code
     if not dot_only:
-        with open(sql_output_file, 'w') as f:
-            f.write(
-                sql_template.render(
-                    entities=entities,
-                    database_name=database_name,
-                    time=get_current_time()
-                )
-            )
+        sql_template = init_template_engine(this_folder, 'sql_create.template')
+        
+        data = sql_template.render(
+            entities=entities,
+            database_name=database_name,
+            time=get_current_time()
+        )
+
+        write_to_file(sql_output_file, data)
 
     # Generate dot
     if not sql_only:
         dot_template = init_template_engine(this_folder, 'dot_create.template')
-        with open(dot_output_file, 'w') as f:
-            f.write(
-                dot_template.render(
-                    entities=entities,
-                    database_name=database_name,
-                    time=get_current_time()
-                )
-            )
+        
+        data = dot_template.render(
+            entities=entities,
+            database_name=database_name,
+            time=get_current_time()
+        )
 
-
+        write_to_file(dot_output_file, data)
 
 if __name__ == '__main__':
     app = CommandLine()
