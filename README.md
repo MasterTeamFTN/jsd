@@ -8,6 +8,25 @@ Clanovi tima:
 - Boris Šuličenko R2 3/2020
 - Nikolina Petrović R2 29/2020
 
+## Uputstvo za koriscenje
+
+```
+$ git clone https://github.com/MasterTeamFTN/jsd.git
+$ cd jsd
+$ python -m venv env
+$ source env/bin/activate
+$ pip install -r requirements.txt
+$ cd sql_generator
+$ python main.py -srcSq ./input-file.sg -sql ./out/db.sql -dot ./out/er.dot
+```
+
+Parametri za pokretanje ```main.py```:
+- ```-srcSg``` - specificira gde se nalazi izvorni .sg fajl
+- ```-sql``` - specificira gde da se sacuva generisana .sql skripta 
+- ```-dot``` - specificira gde da se sacuva generisani .dot fajl
+- ```--dot-only``` - generisanje samo .dot fajla
+- ```--sql-only``` - generisanje samo .sql fajla
+
 ## Specifikacija
 
 Jezik bi sluzio za generisanje SQL koda za kreiranje seme baze podataka. Kroz jezik bi bilo pojednostavljeno predstavljanje
