@@ -38,3 +38,8 @@ def str2bool(v):
         return False
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
+
+
+def write_to_file(file, data):
+    with open(file, 'w') as f:
+        f.write(data)
