@@ -29,7 +29,7 @@ strict digraph ER_Diagram {
         {% endfor %}
 
         {% for relation in entity.relations %}
-            {{ relation.property_name }} FK
+            {{ relation.property_name }} {{ relation.property_type }} FK
             \l
         {% endfor %}
         }"
