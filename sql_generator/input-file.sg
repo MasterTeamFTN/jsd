@@ -1,22 +1,12 @@
 database=mysql
 
-entity Student {
+entity Test {
     id number [pk]
-    indeks varchar [unique notnull]
-    ime varchar
-    prezime varchar
-    1..1 Predmet diplomski
-    *..* Predmet
+    name varchar [notnull]
 }
 
-entity Predmet {
-    naziv varchar [pk]
-    opis varchar [notnull]
-}
-
-entity Fakultet {
-    id varchar [pk]
-    naziv varchar
-    1..* Student prvazeljazaupis
-    1..* Student drugazeljazaupis
+entity Subject {
+    id varchar
+    name varchar [notnull]
+    1..* Test tests
 }

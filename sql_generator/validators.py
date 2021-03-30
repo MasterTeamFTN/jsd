@@ -40,7 +40,7 @@ def check_multiple_pk(entities):
     Returns status and entity if error exists
     """
     for entity in entities:
-        # Collect all properties from 1 entity 
+        # Collect all properties from 1 entity
         constraints = []
 
         for prop in entity.properties:
@@ -49,6 +49,25 @@ def check_multiple_pk(entities):
 
         # Duplicated exist
         if constraints.count('PRIMARY KEY') > 1:
+            return True, entity
+
+    return False, None
+
+def check_pk_exists(entities):
+    """
+    Checks if there are multiple primary keys in one entity
+    Returns status and entity if error exists
+    """
+    for entity in entities:
+        # Collect all properties from 1 entity
+        constraints = []
+
+        for prop in entity.properties:
+            for constraint in prop.constraints:
+                constraints.append(constraint)
+
+        # Duplicated exist
+        if constraints.count('PRIMARY KEY') == 0:
             return True, entity
 
     return False, None
