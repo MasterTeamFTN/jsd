@@ -11,7 +11,7 @@ from command_line import CommandLine
 from relations_manager import manage_relations
 from template_engine import init_template_engine
 
-from properties_manager import copy_properties
+from properties_manager import copy_properties, extends_properties
 
 this_folder = dirname(__file__)
 
@@ -50,11 +50,13 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
             print(f'Error - Entity with name \'{structure.name}\' already exists')
             return
 
-        # Handle fields and copy 
+        # Handle fields and copy
         if hasattr(structure, 'copy'):
             copy_properties(structure)
 
         entity = Entity(structure.name)
+        if hasattr(structure, 'extends'):
+            extends_properties(entity, structure, entities)
         entities.append(entity)
 
         for prop in structure.properties:
@@ -72,7 +74,7 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
             if prop.constraints is not None:
                 for constraint in prop.constraints.constraints:
                     p.constraints.append(constraints[constraint])
-    
+
     # Second pass - create relations
     for structure in model.structures:
         if structure.__class__.__name__ == 'Entity':
@@ -93,7 +95,7 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
     # Generate SQL code
     if not dot_only:
         sql_template = init_template_engine(this_folder, 'sql_create.template')
-        
+
         data = sql_template.render(
             entities=entities,
             database_name=database_name,
@@ -105,7 +107,7 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
     # Generate dot
     if not sql_only:
         dot_template = init_template_engine(this_folder, 'dot_create.template')
-        
+
         data = dot_template.render(
             entities=entities,
             database_name=database_name,
@@ -113,6 +115,7 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
         )
 
         write_to_file(dot_output_file, data)
+
 
 if __name__ == '__main__':
     app = CommandLine()

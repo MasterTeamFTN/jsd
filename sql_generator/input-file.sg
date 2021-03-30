@@ -1,22 +1,29 @@
 database=mysql
 
-entity Student {
-    id number [pk]
-    indeks varchar [unique notnull]
-    ime varchar
-    prezime varchar
-    1..1 Predmet diplomski
-    *..* Predmet
+fields MyFields {
+    hello varchar [pk]
+    naziv varchar
 }
+
+entity Fakultet extends MyFields {
+    naziv varchar [pk]
+    godina_osnivanja number [unique notnull]
+    grad varchar [notnull]
+}
+
+entity Fields2 extends MyFields {
+    naziv varchar [pk]
+}
+
 
 entity Predmet {
     naziv varchar [pk]
-    opis varchar [notnull]
+    broj_bodova number [notnull]
 }
 
-entity Fakultet {
-    id varchar [pk]
-    naziv varchar
-    1..* Student prvazeljazaupis
-    1..* Student drugazeljazaupis
+entity Student {
+    id integer [pk]
+    indeks integer
+    *..* Fakultet
+    *..* Predmet
 }
