@@ -13,7 +13,7 @@ Config:
 ;
 
 Structure:
-    Entity | Field 
+    Entity | Field
 ;
 
 Entity:
@@ -30,7 +30,7 @@ Field:
 
 Property:
     name=ID type=ID constraints=PropertyConstraints? |
-    OneToOne oneToOne=[Entity] |
+    OneToOne oneToOne=[Entity] name=ID |
     OneToMany oneToMany=[Entity] name=ID |
     ManyToMany manyToMany=[Entity]
 ;

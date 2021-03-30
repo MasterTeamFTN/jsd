@@ -1,4 +1,4 @@
-from models import Entity, Property, Relation, ONE_TO_MANY, MANY_TO_MANY
+from models import Entity, Property, Relation, ONE_TO_MANY, MANY_TO_MANY, ONE_TO_ONE
 from utils import get_current_time, find_pk_property, find_entity
 
 
@@ -47,8 +47,15 @@ def manage_relations(structure, entities):
             related_entity.add_relation(relation)
 
         elif property_from_structure.oneToOne is not None:
-            # Todo: implement many to one relation
-            pass
+            main_entity = find_entity(structure.name, entities)
+            related_entity = find_entity(property_from_structure.oneToOne.name, entities)
+
+            related_entity_pk_property = find_pk_property(property_from_structure.oneToOne.properties)
+            name = f'{related_entity.name}_{related_entity_pk_property.name}_{property_from_structure.name}'.lower()
+
+            relation = Relation(name, related_entity_pk_property.type, related_entity.name, related_entity_pk_property.name,
+                                ONE_TO_ONE)
+            main_entity.add_relation(relation)
 
         elif property_from_structure not in non_relation_properties:
             non_relation_properties.append(property_from_structure)
