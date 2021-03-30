@@ -5,7 +5,7 @@ from textx import metamodel_from_file
 from models import Entity, Property, Relation, ONE_TO_MANY, MANY_TO_MANY
 from utils import get_current_time, find_pk_property, find_entity, write_to_file
 from mappings import constraints
-from validators import check_duplicate_constraints, check_multiple_entity_names, check_multiple_pk, check_multiple_property_name
+from validators import check_duplicate_constraints, check_multiple_entity_names, check_multiple_pk, check_pk_exists, check_multiple_property_name
 from command_line import CommandLine
 
 from relations_manager import manage_relations
@@ -50,7 +50,7 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
             print(f'Error - Entity with name \'{structure.name}\' already exists')
             return
 
-        # Handle fields and copy 
+        # Handle fields and copy
         if hasattr(structure, 'copy'):
             copy_properties(structure)
 
@@ -68,11 +68,16 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
 
             p = Property(prop.name, prop.type)
             entity.add_property(p)
-
             if prop.constraints is not None:
                 for constraint in prop.constraints.constraints:
                     p.constraints.append(constraints[constraint])
-    
+
+
+    status, entity = check_pk_exists(entities)
+    if status:
+        print(f'Error - Entity \'{entity.name}\' has no primary key')
+        return
+
     # Second pass - create relations
     for structure in model.structures:
         if structure.__class__.__name__ == 'Entity':
@@ -93,7 +98,7 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
     # Generate SQL code
     if not dot_only:
         sql_template = init_template_engine(this_folder, 'sql_create.template')
-        
+
         data = sql_template.render(
             entities=entities,
             database_name=database_name,
@@ -105,7 +110,7 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
     # Generate dot
     if not sql_only:
         dot_template = init_template_engine(this_folder, 'dot_create.template')
-        
+
         data = dot_template.render(
             entities=entities,
             database_name=database_name,
