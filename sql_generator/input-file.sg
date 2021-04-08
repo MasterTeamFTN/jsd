@@ -1,29 +1,14 @@
 database=mysql
+type number
+type varchar
 
-entity MyFields {
-    hello varchar [pk]
-    naziv varchar
-}
-
-entity Fakultet extends MyFields {
-    naziv varchar [pk]
-    godina_osnivanja number [unique notnull]
-    grad varchar [notnull]
-}
-
-entity Fields2 extends MyFields {
-    naziv varchar [pk]
-}
-
-
-entity Predmet {
-    naziv varchar [pk]
-    broj_bodova number [notnull]
-}
-
-entity Student {
+entity Test {
     id integer [pk]
-    indeks integer
-    *..* Fakultet
-    *..* Predmet
+    name string [notnull]
+}
+
+entity Subject {
+    id varchar [pk]
+    name var [notnull]
+    1..* Test tests
 }

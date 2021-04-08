@@ -28,3 +28,11 @@ class Relation:
         self.related_entity_name = related_entity_name
         self.related_entity_pk = related_entity_pk
         self.type = relation_type
+
+class SimpleType(object):
+    def __init__(self, parent, name):
+        self.parent = parent
+        self.name = name
+
+    def __str__(self):
+        return self.name

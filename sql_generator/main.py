@@ -2,10 +2,10 @@ from os import mkdir
 from os.path import exists, dirname, join
 
 from textx import metamodel_from_file
-from models import Entity, Property, Relation, ONE_TO_MANY, MANY_TO_MANY
+from models import Entity, Property, Relation, ONE_TO_MANY, MANY_TO_MANY, SimpleType
 from utils import get_current_time, find_pk_property, find_entity, write_to_file
 from mappings import constraints
-from validators import check_duplicate_constraints, check_multiple_entity_names, check_multiple_pk, check_multiple_property_name
+from validators import check_duplicate_constraints, check_multiple_entity_names, check_multiple_pk, check_pk_exists, check_multiple_property_name
 from command_line import CommandLine
 
 from relations_manager import manage_relations
@@ -19,7 +19,13 @@ def get_mm():
     """
     Builds and returns a meta-model for our language.
     """
-    return metamodel_from_file(join(this_folder, 'grammars', 'grammar.tx'))
+    type_builtins = {
+            'integer': SimpleType(None, 'integer'),
+            'string': SimpleType(None, 'string'),
+            'float': SimpleType(None, 'float')
+    }
+    return metamodel_from_file(join(this_folder, 'grammars', 'grammar.tx'), classes=[SimpleType],
+                                    builtins=type_builtins)
 
 
 def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, debug=False):
@@ -68,10 +74,14 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
 
             p = Property(prop.name, prop.type)
             entity.add_property(p)
-
             if prop.constraints is not None:
                 for constraint in prop.constraints.constraints:
                     p.constraints.append(constraints[constraint])
+
+    status, entity = check_pk_exists(entities)
+    if status:
+        print(f'Error - Entity \'{entity.name}\' has no primary key')
+        return
 
     # Second pass - create relations
     for structure in model.structures:
@@ -95,7 +105,7 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
 
     # Generate SQL code
     if not dot_only:
-        sql_template = init_template_engine(this_folder, 'sql_create.template')
+        sql_template = init_template_engine(this_folder, 'sql_create.template', database_name)
 
         data = sql_template.render(
             entities=entities,
@@ -107,7 +117,7 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
 
     # Generate dot
     if not sql_only:
-        dot_template = init_template_engine(this_folder, 'dot_create.template')
+        dot_template = init_template_engine(this_folder, 'dot_create.template', database_name)
 
         data = dot_template.render(
             entities=entities,
