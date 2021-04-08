@@ -21,7 +21,8 @@ def get_mm():
     """
     type_builtins = {
             'integer': SimpleType(None, 'integer'),
-            'string': SimpleType(None, 'string')
+            'string': SimpleType(None, 'string'),
+            'float': SimpleType(None, 'float')
     }
     return metamodel_from_file(join(this_folder, 'grammars', 'grammar.tx'), classes=[SimpleType],
                                     builtins=type_builtins)

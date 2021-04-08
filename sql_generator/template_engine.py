@@ -6,8 +6,9 @@ def mysql(s):
     Maps type names from SimpleType to Java.
     """
     return {
-            'integer': 'number',
-            'string': 'varchar'
+            'integer': 'INT UNSIGNED',
+            'string': 'VARCHAR',
+            'float': 'FLOAT'
     }.get(s.name, s.name)
 
 def postgresql(s):
@@ -16,7 +17,8 @@ def postgresql(s):
     """
     return {
             'integer': 'INTEGER',
-            'string': 'VARCHAR'
+            'string': 'VARCHAR',
+            'float': 'REAL'
     }.get(s.name, s.name)
 
 
