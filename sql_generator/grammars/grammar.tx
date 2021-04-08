@@ -17,7 +17,7 @@ Structure:
 ;
 
 Entity:
-    'entity' name=ID ('copy' copy=[Field])? '{'
+    'entity' name=ID ('extends' extends=[Entity])? ('copy' copy=[Field])? '{'
         properties+=Property
     '}'
 ;

@@ -11,7 +11,7 @@ from command_line import CommandLine
 from relations_manager import manage_relations
 from template_engine import init_template_engine
 
-from properties_manager import copy_properties
+from properties_manager import copy_properties, extends_properties
 
 this_folder = dirname(__file__)
 
@@ -78,7 +78,6 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
                 for constraint in prop.constraints.constraints:
                     p.constraints.append(constraints[constraint])
 
-
     status, entity = check_pk_exists(entities)
     if status:
         print(f'Error - Entity \'{entity.name}\' has no primary key')
@@ -88,6 +87,9 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
     for structure in model.structures:
         if structure.__class__.__name__ == 'Entity':
             structure.properties = manage_relations(structure, entities)
+
+            if hasattr(structure, 'extends'):
+                extends_properties(entity, structure, entities)
 
 
     # Validate constraints
@@ -124,6 +126,7 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
         )
 
         write_to_file(dot_output_file, data)
+
 
 if __name__ == '__main__':
     app = CommandLine()

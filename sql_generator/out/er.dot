@@ -9,6 +9,7 @@ strict digraph ER_Diagram {
     concentrate=true;
 
 
+
     "Test" [
         shape = "record"
         
@@ -21,6 +22,7 @@ strict digraph ER_Diagram {
 
                     NOT NULL
             \l
+
 
             subject_id_tests varchar FK
             \l
@@ -49,8 +51,8 @@ strict digraph ER_Diagram {
     // TODO: Add relationships
     // Relations between entities
             "Test"->"Subject" 
+                [arrowhead=tee];
 
-                [arrowhead=crow];
 
             "Subject"->"Test"
                 [arrowhead=tee];
