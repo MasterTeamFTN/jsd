@@ -1,12 +1,14 @@
 database=mysql
+type number
+type varchar
 
 entity Test {
-    id number [pk]
-    name varchar [notnull]
+    id integer [pk]
+    name string [notnull]
 }
 
 entity Subject {
-    id varchar
-    name varchar [notnull]
+    id varchar [pk]
+    name var [notnull]
     1..* Test tests
 }
