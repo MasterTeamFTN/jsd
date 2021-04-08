@@ -13,7 +13,7 @@ Config:
 ;
 
 Structure:
-    Entity | Field
+    SimpleType | Entity | Field
 ;
 
 Entity:
@@ -27,9 +27,14 @@ Field:
         properties+=Property
     '}'
 ;
-
+SimpleType:
+  'type' name=ID
+;
+Type:
+  SimpleType
+;
 Property:
-    name=ID type=ID constraints=PropertyConstraints? |
+    name=ID type=[Type] constraints=PropertyConstraints? |
     OneToOne oneToOne=[Entity] name=ID |
     OneToMany oneToMany=[Entity] name=ID |
     ManyToMany manyToMany=[Entity]
