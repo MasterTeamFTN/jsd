@@ -1,6 +1,6 @@
 database=mysql
 
-fields MyFields {
+entity MyFields {
     hello varchar [pk]
     naziv varchar
 }

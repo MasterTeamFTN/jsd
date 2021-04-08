@@ -55,8 +55,6 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
             copy_properties(structure)
 
         entity = Entity(structure.name)
-        if hasattr(structure, 'extends'):
-            extends_properties(entity, structure, entities)
         entities.append(entity)
 
         for prop in structure.properties:
@@ -79,6 +77,9 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
     for structure in model.structures:
         if structure.__class__.__name__ == 'Entity':
             structure.properties = manage_relations(structure, entities)
+
+            if hasattr(structure, 'extends'):
+                extends_properties(entity, structure, entities)
 
 
     # Validate constraints
