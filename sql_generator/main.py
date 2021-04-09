@@ -10,7 +10,7 @@ from command_line import CommandLine
 
 from relations_manager import manage_relations
 from template_engine import init_template_engine
-
+from mappings import get_type
 from properties_manager import copy_properties, extends_properties
 
 this_folder = dirname(__file__)
@@ -76,7 +76,7 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
                 print(f'Error - Property \'{prop.name}\' of entity \'{entity.name}\' already exists.')
                 return
 
-            p = Property(prop.name, prop.type)
+            p = Property(prop.name, get_type(prop.type, database_name))
             entity.add_property(p)
             if prop.constraints is not None:
                 for constraint in prop.constraints.constraints:

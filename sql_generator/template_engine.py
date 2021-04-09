@@ -26,11 +26,6 @@ def init_template_engine(path, template_name, database_name):
         lstrip_blocks=True
     )
 
-    if database_name == "mysql":
-        jinja_env.filters['sql'] = mysql
-    elif database_name == "postgresql":
-        jinja_env.filters['sql'] = postgresql
-
     # Load template
     template_path = join('templates', template_name)
     # return jinja_env.get_template(template_path)
