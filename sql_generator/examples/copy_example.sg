@@ -1,0 +1,12 @@
+database=postgresql
+
+fields Common {
+    created_on string
+    updated_on string
+}
+
+entity Kompanija copy Common {
+    id string [pk]
+    naziv string
+    god_osnivanja integer
+}
