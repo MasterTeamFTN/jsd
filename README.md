@@ -17,7 +17,7 @@ $ python -m venv env
 $ source env/bin/activate
 $ pip install -r requirements.txt
 $ cd sql_generator
-$ python main.py -srcSq ./input-file.sg -sql ./out/db.sql -dot ./out/er.dot
+$ python main.py -srcSg ./input-file.sg -sql ./out/db.sql -dot ./out/er.dot
 ```
 
 Parametri za pokretanje ```main.py```:
