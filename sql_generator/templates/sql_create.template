@@ -6,7 +6,7 @@
 
 CREATE TABLE {{ entity.name }} (
 {% for property in entity.properties %}
-    {{ property.name }} {{ property.type|sql }}
+    {{ property.name }} {{ property.type }}
         {%- for constraint in property.constraints -%}
             {{ " " + constraint }}
         {%- endfor -%},

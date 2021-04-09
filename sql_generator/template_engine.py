@@ -2,9 +2,6 @@ from os.path import join
 import jinja2
 
 def mysql(s):
-    """
-    Maps type names from SimpleType to Java.
-    """
     return {
             'integer': 'INT UNSIGNED',
             'string': 'VARCHAR',
@@ -12,9 +9,6 @@ def mysql(s):
     }.get(s.name, s.name)
 
 def postgresql(s):
-    """
-    Maps type names from SimpleType to Java.
-    """
     return {
             'integer': 'INTEGER',
             'string': 'VARCHAR',
@@ -31,11 +25,6 @@ def init_template_engine(path, template_name, database_name):
         trim_blocks=True,
         lstrip_blocks=True
     )
-
-    if database_name == "mysql":
-        jinja_env.filters['sql'] = mysql
-    elif database_name == "postgresql":
-        jinja_env.filters['sql'] = postgresql
 
     # Load template
     template_path = join('templates', template_name)
