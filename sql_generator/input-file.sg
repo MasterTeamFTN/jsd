@@ -9,6 +9,6 @@ entity Test {
 
 entity Subject {
     id varchar [pk]
-    name var [notnull]
+    name varchar [notnull]
     1..* Test tests
 }

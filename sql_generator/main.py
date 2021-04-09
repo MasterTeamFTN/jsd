@@ -14,6 +14,7 @@ from template_engine import init_template_engine
 from properties_manager import copy_properties, extends_properties
 
 this_folder = dirname(__file__)
+databases = ['mysql', 'postgresql']
 
 def get_mm():
     """
@@ -41,6 +42,9 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
     model = mm.model_from_file(model_filename)
 
     database_name = model.config.db_name
+    if not database_name in databases:
+        print(f'Error - Unknown database \'{database_name}\'.')
+        return
     # TODO: check here if we support this database
     # You can check if model.config.db_name exists
     # as a key of types dictionary, or something like that
