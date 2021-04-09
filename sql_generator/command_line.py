@@ -28,16 +28,16 @@ class CommandLine:
                             help="Specify if you only want sql output file.")
         self.args = parser.parse_args()
 
-        if self.args.sourceFile:
-            print("You have used '-srcSg' or '--sourceSgFile' with argument: {0}".format(self.args.sourceFile))
-        if self.args.sqlFile:
-            print("You have used '-sql' or '--sqlOutputPath' with argument: {0}".format(self.args.sqlFile))
-        if self.args.dotFile:
-            print("You have used '-dot' or '--dotOutputPath' with argument: {0}".format(self.args.dotFile))
-        if self.args.dotOnly:
-            print("You have used '--dot-only' with argument: {0}".format(self.args.dotOnly))
-        if self.args.sqlOnly:
-            print("You have used '--sql-only' with argument: {0}".format(self.args.sqlOnly))
+        # if self.args.sourceFile:
+        #     print("You have used '-srcSg' or '--sourceSgFile' with argument: {0}".format(self.args.sourceFile))
+        # if self.args.sqlFile:
+        #     print("You have used '-sql' or '--sqlOutputPath' with argument: {0}".format(self.args.sqlFile))
+        # if self.args.dotFile:
+        #     print("You have used '-dot' or '--dotOutputPath' with argument: {0}".format(self.args.dotFile))
+        # if self.args.dotOnly:
+        #     print("You have used '--dot-only' with argument: {0}".format(self.args.dotOnly))
+        # if self.args.sqlOnly:
+        #     print("You have used '--sql-only' with argument: {0}".format(self.args.sqlOnly))
+
         if self.args.dotOnly and self.args.sqlOnly:
             raise argparse.ArgumentTypeError("You can not use '--dot-only' and '--sql-only' together. Use eighter one or none")
-

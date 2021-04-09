@@ -2,7 +2,7 @@ from datetime import datetime
 import argparse
 
 def get_current_time():
-    return datetime.now()
+    return datetime.now().strftime('%d.%m.%Y. %H:%M')
 
 def find_pk_property(properties):
     """

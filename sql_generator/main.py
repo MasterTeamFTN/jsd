@@ -43,7 +43,7 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
 
     database_name = model.config.db_name
     if not database_name in databases:
-        print(f'Error - Unknown database \'{database_name}\'.')
+        print(f'Error - Unknown database \'{database_name}\'. Supported databases: mysql and postgresql')
         return
     # TODO: check here if we support this database
     # You can check if model.config.db_name exists
@@ -93,7 +93,7 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
             structure.properties = manage_relations(structure, entities, database_name)
 
             if hasattr(structure, 'extends'):
-                extends_properties(entity, structure, entities)
+                extends_properties(entity, structure, entities, database_name)
 
 
     # Validate constraints

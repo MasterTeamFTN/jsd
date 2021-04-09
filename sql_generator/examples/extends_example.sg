@@ -1,0 +1,10 @@
+database=mysql
+
+entity A {
+    id integer [pk]
+}
+
+entity B extends A {
+    id string [pk]
+    name string
+}
