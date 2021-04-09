@@ -1,8 +1,8 @@
 from models import Entity, Property, Relation, ONE_TO_MANY, MANY_TO_MANY, ONE_TO_ONE
 from utils import get_current_time, find_pk_property, find_entity
+from mappings import get_type
 
-
-def manage_relations(structure, entities):
+def manage_relations(structure, entities, database):
     '''
     Method used to manage all the manyTomany, oneToMany Todo: ManyToOne
     properties of a structure by removing them and creating inter table if needed
@@ -29,7 +29,7 @@ def manage_relations(structure, entities):
                                      MANY_TO_MANY)
             entity.add_relation(firstRelation)
 
-            secondRelation = Relation(f'{stEntityName}_{stProp.name}'.lower(), stProp.type, stEntityName, stProp.name,
+            secondRelation = Relation(f'{stEntityName}_{stProp.name}'.lower(), get_type(stProp.type), stEntityName, stProp.name,
                                       MANY_TO_MANY)
             entity.add_relation(secondRelation)
 
@@ -42,7 +42,7 @@ def manage_relations(structure, entities):
             main_entity_pk_property = find_pk_property(structure.properties)
             name = f'{main_entity.name}_{main_entity_pk_property.name}_{property_from_structure.name}'.lower()
 
-            relation = Relation(name, main_entity_pk_property.type, main_entity.name, main_entity_pk_property.name,
+            relation = Relation(name, get_type(main_entity_pk_property.type), main_entity.name, main_entity_pk_property.name,
                                 ONE_TO_MANY)
             related_entity.add_relation(relation)
 
@@ -53,7 +53,7 @@ def manage_relations(structure, entities):
             related_entity_pk_property = find_pk_property(property_from_structure.oneToOne.properties)
             name = f'{related_entity.name}_{related_entity_pk_property.name}_{property_from_structure.name}'.lower()
 
-            relation = Relation(name, related_entity_pk_property.type, related_entity.name, related_entity_pk_property.name,
+            relation = Relation(name, get_type(related_entity_pk_property.type, database), related_entity.name, related_entity_pk_property.name,
                                 ONE_TO_ONE)
             main_entity.add_relation(relation)
 

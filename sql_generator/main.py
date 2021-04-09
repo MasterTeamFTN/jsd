@@ -90,7 +90,7 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
     # Second pass - create relations
     for structure in model.structures:
         if structure.__class__.__name__ == 'Entity':
-            structure.properties = manage_relations(structure, entities)
+            structure.properties = manage_relations(structure, entities, database_name)
 
             if hasattr(structure, 'extends'):
                 extends_properties(entity, structure, entities)

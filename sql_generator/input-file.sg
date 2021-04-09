@@ -3,12 +3,12 @@ type number
 type varchar
 
 entity Test {
-    id integer [pk]
+    id string [pk]
     name string [notnull]
 }
 
 entity Subject {
     id varchar [pk]
     name varchar [notnull]
-    1..* Test tests
+    1..1 Test tests
 }
