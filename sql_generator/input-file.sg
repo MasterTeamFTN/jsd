@@ -1,8 +1,10 @@
 database=mysql
 type number
 type varchar
+type myType="MEDIUMINT"
 
 entity Test {
+    myField myType [notnull]
     id string [pk]
     name string [notnull]
 }
