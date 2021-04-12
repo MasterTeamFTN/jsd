@@ -3,15 +3,15 @@ import jinja2
 
 def mysql(s):
     return {
-            'integer': 'INT UNSIGNED',
-            'string': 'VARCHAR',
+            'integer': 'INT',
+            'string': 'VARCHAR(255)',
             'float': 'FLOAT'
     }.get(s.name, s.name)
 
 def postgresql(s):
     return {
             'integer': 'INTEGER',
-            'string': 'VARCHAR',
+            'string': 'VARCHAR(255)',
             'float': 'REAL'
     }.get(s.name, s.name)
 

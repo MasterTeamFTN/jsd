@@ -1,0 +1,35 @@
+database=mysql
+
+entity Owner {
+    id integer [pk]
+    name string [notnull]
+}
+
+entity City {
+    id integer [pk]
+    name string [notnull]
+    1..* Bookstore bookstoresInCity
+}
+
+entity Book {
+    id integer [pk]
+    name string [notnull]
+    author string
+    isbn string [unique notnull]
+}
+
+entity Bookstore {
+    id integer [pk]
+    name string [notnull]
+    address string
+    zipcode integer
+    1..* Book publishedBooks
+    *..* Owner
+}
+
+entity PublishingHouse {
+    id integer [pk]
+    name string [notnull]
+    1..* Book book
+}
+
