@@ -25,7 +25,7 @@ def manage_relations(structure, entities, database_name):
             # idProperty.constraints.append('PRIMARY KEY')
             # entity.properties.append(idProperty)
 
-            firstRelation = Relation(f'{ftEntityName}_{ftProp.name}'.lower(), ftProp.type, ftEntityName, ftProp.name,
+            firstRelation = Relation(f'{ftEntityName}_{ftProp.name}'.lower(), get_type(ftProp.type, database_name), ftEntityName, ftProp.name,
                                      MANY_TO_MANY)
             entity.add_relation(firstRelation)
 
