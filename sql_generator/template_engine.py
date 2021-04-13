@@ -1,21 +1,6 @@
 from os.path import join
 import jinja2
 
-def mysql(s):
-    return {
-            'integer': 'INT',
-            'string': 'VARCHAR(255)',
-            'float': 'FLOAT'
-    }.get(s.name, s.name)
-
-def postgresql(s):
-    return {
-            'integer': 'INTEGER',
-            'string': 'VARCHAR(255)',
-            'float': 'REAL'
-    }.get(s.name, s.name)
-
-
 def init_template_engine(path, template_name, database_name):
     """
     Initialize jinja template engine

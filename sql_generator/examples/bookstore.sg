@@ -11,12 +11,6 @@ entity City {
     1..* Bookstore bookstoresInCity
 }
 
-entity Book {
-    id integer [pk]
-    name string [notnull]
-    author string
-    isbn string [unique notnull]
-}
 
 entity Bookstore {
     id integer [pk]
@@ -33,3 +27,9 @@ entity PublishingHouse {
     1..* Book book
 }
 
+entity Book {
+    id integer [pk]
+    name string [notnull]
+    author string
+    isbn string [unique notnull]
+}
