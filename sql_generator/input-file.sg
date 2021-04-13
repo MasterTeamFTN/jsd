@@ -1,5 +1,5 @@
 database=mysql
-type number
+type number=""
 type varchar
 type myType="MEDIUMINT"
 

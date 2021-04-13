@@ -1,4 +1,6 @@
 database=mysql
+type number
+type varchar
 
 entity Student {
     id number [pk]
