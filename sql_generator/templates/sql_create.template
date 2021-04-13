@@ -9,11 +9,12 @@ CREATE TABLE {{ entity.name }} (
     {{ property.name }} {{ property.type }}
         {%- for constraint in property.constraints -%}
             {{ " " + constraint }}
-        {%- endfor -%},
+        {%- endfor -%}{{ "," if not loop.last else "," if entity.relations|length!=0 else "" }}
 {% endfor -%}
 
 {% for relation in entity.relations %}
-    {{ relation.property_name }} {{ relation.property_type }} FOREIGN KEY REFERENCES {{ relation.related_entity_name }}({{ relation.related_entity_pk }}),
+    {{ relation.property_name }} {{ relation.property_type if relation.property_type.value==null else relation.property_type.value }},
+    FOREIGN KEY ({{ relation.property_name }}) REFERENCES {{ relation.related_entity_name }}({{ relation.related_entity_pk }}){{ "," if not loop.last else "" }}
 {% endfor %}
 );
 
