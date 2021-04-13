@@ -11,7 +11,7 @@ from command_line import CommandLine
 from relations_manager import manage_relations
 from template_engine import init_template_engine
 from mappings import get_type
-from properties_manager import copy_properties, extends_properties
+from properties_manager import copy_properties, extends_properties, fix_entity_order
 
 this_folder = dirname(__file__)
 databases = ['mysql', 'postgresql']
@@ -106,6 +106,9 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
     if status:
         print(f'Error - Entity \'{entity.name}\' has more than one primary key')
         return
+
+    # Fix entity order to generate valid sql script
+    entities = fix_entity_order(entities)
 
     # Generate SQL code
     if not dot_only:

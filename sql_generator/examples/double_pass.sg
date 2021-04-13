@@ -1,0 +1,23 @@
+database=mysql
+
+entity E1 {
+    id integer [pk]
+    1..1 E4 e4
+}
+
+entity E2 {
+    id integer [pk]
+}
+
+entity E3 {
+    id integer [pk]
+}
+
+entity E4 {
+    id integer [pk]
+    1..1 E5 e5
+}
+
+entity E5 {
+    id integer [pk]
+}
