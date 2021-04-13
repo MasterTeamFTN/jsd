@@ -1,23 +1,24 @@
 database=mysql
-type number
-type varchar
+type number="INT"
+type VARCHAR
 
 entity Student {
     id number [pk]
-    indeks varchar [unique notnull]
-    ime varchar
-    prezime varchar
+    indeks string [notnull unique]
+    ime VARCHAR
+    prezime VARCHAR
     *..* Predmet
 }
 
 entity Predmet {
-    naziv varchar [pk]
-    opis varchar [notnull]
+    id number [pk]
+    naziv VARCHAR
+    opis VARCHAR [notnull]
 }
 
 entity Fakultet {
-    id varchar [pk]
-    naziv varchar
+    id number [pk]
+    naziv VARCHAR
     1..* Student prvazeljazaupis
     1..* Student drugazeljazaupis
 }
