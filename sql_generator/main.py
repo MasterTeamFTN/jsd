@@ -2,6 +2,7 @@ from os import mkdir
 from os.path import exists, dirname, join
 
 from textx import metamodel_from_file
+from textx.exceptions import TextXSyntaxError
 from models import Entity, Property, Relation, ONE_TO_MANY, MANY_TO_MANY, SimpleType
 from utils import get_current_time, find_pk_property, find_entity, write_to_file
 from mappings import constraints
@@ -39,7 +40,12 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
         mkdir(srcgen_folder)
 
     # Build a model from input file
-    model = mm.model_from_file(model_filename)
+    try:
+        model = mm.model_from_file(model_filename)
+    except TextXSyntaxError as error:
+        print('Compilation failed...')
+        print(error)
+        return
 
     database_name = model.config.db_name
     if not database_name in databases:
@@ -134,6 +140,9 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
 
         write_to_file(dot_output_file, data)
 
+    print('Successful compilation')
+    print(f'SQL Script generated at: {sql_output_file}')
+    print(f'ER diagram generated at: {dot_output_file}')
 
 if __name__ == '__main__':
     app = CommandLine()
