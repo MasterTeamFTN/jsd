@@ -29,10 +29,9 @@ Parametri za pokretanje ```main.py```:
 
 ## Specifikacija
 
-Jezik bi sluzio za generisanje SQL koda za kreiranje seme baze podataka. Kroz jezik bi bilo pojednostavljeno predstavljanje
-veza medju entitetima, bilo bi moguce definisati zajednicke atribute i predstaviti veze nasledjivanja.  
+Jezik bi sluzio za generisanje SQL koda za kreiranje seme baze podataka i ER diagrama (dot fajl). Kroz jezik bi bilo pojednostavljeno predstavljanje veza medju entitetima, bilo bi moguce definisati zajednicke atribute i predstaviti veze nasledjivanja.  
 
-Unutar ```entity``` se navode imena elemenata, njihovi tipovi kao i dodatni atributi poput unique, notnull, ... Moguce je 
+Unutar ```entity``` se navode imena elemenata, njihovi tipovi kao i dodatni atributi poput pk, unique i notnull. Moguce je 
 navesti i veze ka drugim tabelama u vidu relacija ```1..1```, ```1..*``` i ```*..*```. Nas interpreter bi sam trebao da 
 razresi kako ce se ostvariti ove veze, npr. za ```1..1``` ce se koristiti FK kolona, dok za ```*..*``` bi bila kreirana medju tabela.
 
@@ -43,39 +42,48 @@ Postojao bi jos jedan mehanizam prosirivanja - nasledjivanje. Ovo bi bilo realiz
 drugi sa kljucnom recju ```extends```. Za razliku od ```copy```, ```extends``` nece kopirati elemente u entitet vec ce
 kreirati referencu (FK) na super entitet.
 
+Nas jezik bi podrzavao dve baze podataka ```mysql``` i ```postgresql```. Na pocetku fajla bi se navodilo za koju bazu zelimo da generisemo SQL skriptu.
+
+Jezik bi omogucavao i dupli prolaz kroz fajl cime ne sprecavamo korisnika da kreira entitete u redosledu njihovog koriscenja (entitet se moze koristiti i pre njegovog definisanja). 
+
+Sam interpreter bi imao 3 ugradjenja tipa ```integer```, ```string``` i ```float``` koji se direktno mapiraju na odgovarajuce tipove
+dostupnih baza. Ako korisnik zeli da koristi neki drugi tip postoji nacin da to sam uradi koriscenjem ```type``` izraza sa cime kreira "custom" tip.
+
 Primer:  
 ```
 database=mysql
 
+type date="DATETIME"
+
 // Sadrzi zajednicke atribute za vise entiteta
 fields Details {
-    created_at datetime
-    updated_at datetime
+    created_at date
+    updated_at date
 }
 
 // Entitet fakultet ce pored svojih elemenata imati i elemente iz Details-a
 entity Fakultet copy Details {
     // Elementi mogu da imaju svoje atribute koji se navode unutar [ ]
-    id integer [pk, increment]
-    name varchar
-    city varchar
+    id integer [pk]
+    name string
+    city string
 
     // Elementi koji bi bili predstavljeni preko FK-a ili medju tabelama
-    1..* Student
-    1..1 Dekan
+    1..* Student student
+    1..1 Dekan dekan
 }
 
 entity User copy Details {
     id integer [pk]
-    ime varchar
-    prezime varchar
+    ime string
+    prezime string
 }
 
 // Student nasledjuje klasu User, sto znaci da ce sadrzati sve njegove elemente
 // ali sa njima ce biti povezan preko FK-a
 entity Student extends User {
     id integer [pk]
-    indeks varchar [unique]
+    indeks string [unique]
 }
 
 entity Dekan extends User {
