@@ -11,15 +11,71 @@
     edge[dir=black,arrowtail=empty]
 
 
-16152632[ label="{Program|}"]
+43146048[ label="{Program|}"]
 
-16276824[ label="{Entity|name: ID\l}"]
+43128048[ label="{Config|db_name: ID\l}"]
 
-16352264[ label="{Property|name: ID\ltype: ID\l}"]
+43288992[ label="{*Structure|}"]
+
+43294528[ label="{Entity|name: ID\l}"]
+
+43300064[ label="{Field|name: ID\l}"]
+
+43305600[ label="{SimpleType|name: ID\l}"]
+
+43312256[ label="{*Type|}"]
+
+43317200[ label="{CustomType|name: ID\lvalue: ID\l}"]
+
+43322736[ label="{Property|name: ID\l}"]
+
+43303600[ label="{PropertyConstraints|constraints: list[Constraint]\l}"]
 
 
 
-16152632 -> 16276824[arrowtail=diamond, dir=both, headlabel="entities 1..*"]
-16276824 -> 16352264[arrowtail=diamond, dir=both, headlabel="properties 1..*"]
+43146048 -> 43128048[arrowtail=diamond, dir=both, headlabel="config "]
+43146048 -> 43288992[arrowtail=diamond, dir=both, headlabel="structures 1..*"]
+43288992 -> 43317200 [dir=back]
+43288992 -> 43305600 [dir=back]
+43288992 -> 43294528 [dir=back]
+43288992 -> 43300064 [dir=back]
+43294528 -> 43294528[headlabel="extends "]
+43294528 -> 43300064[headlabel="copy "]
+43294528 -> 43322736[arrowtail=diamond, dir=both, headlabel="properties 1..*"]
+43300064 -> 43322736[arrowtail=diamond, dir=both, headlabel="properties 1..*"]
+43312256 -> 43305600 [dir=back]
+43312256 -> 43317200 [dir=back]
+43322736 -> 43312256[headlabel="type "]
+43322736 -> 43303600[arrowtail=diamond, dir=both, headlabel="constraints "]
+43322736 -> 43294528[headlabel="oneToOne "]
+43322736 -> 43294528[headlabel="oneToMany "]
+43322736 -> 43294528[headlabel="manyToMany "]
+match_rules [ shape=plaintext, label=< <table>
+	<tr>
+		<td><b>Comment</b></td><td>\/\/.*$</td>
+	</tr>
+	<tr>
+		<td><b>Constraint</b></td><td></td>
+	</tr>
+	<tr>
+		<td><b>ManyToMany</b></td><td>*..*</td>
+	</tr>
+	<tr>
+		<td><b>NotNullConstraint</b></td><td>notnull</td>
+	</tr>
+	<tr>
+		<td><b>OneToMany</b></td><td>1..*</td>
+	</tr>
+	<tr>
+		<td><b>OneToOne</b></td><td>1..1</td>
+	</tr>
+	<tr>
+		<td><b>PrimaryKeyConstraint</b></td><td>pk</td>
+	</tr>
+	<tr>
+		<td><b>UniqueConstraint</b></td><td>unique</td>
+	</tr>
+</table> >]
+
 
 }
