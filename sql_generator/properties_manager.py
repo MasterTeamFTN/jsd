@@ -35,11 +35,9 @@ def fix_entity_order(entities):
     for entity in entities:
         if len(entity.relations) == 0:
             new_entities.append(entity)
+            entities.pop(entities.index(entity))
         
     for entity in entities:
-        if len(entity.relations) == 0:
-            continue
-
         move_to_back = False
 
         for relation in entity.relations:
@@ -49,7 +47,7 @@ def fix_entity_order(entities):
 
         if move_to_back:
             # move this element to back of the array
-            entities.append(entities.pop(entities.index(entity)))
+            entities.append(entity)
         else:
             new_entities.append(entity)
 
