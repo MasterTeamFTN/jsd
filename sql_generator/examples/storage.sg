@@ -1,0 +1,51 @@
+database=mysql
+type date="TIMESTAMP"
+type BOOLEAN
+
+fields OsnovnaPolja {
+    id integer [pk]
+    status BOOLEAN
+}
+
+entity Korisnik copy OsnovnaPolja {
+    kontakt string
+    ime string [notnull]
+    prezime string
+    adresa string
+    1..* Transakcija transakcija
+}
+
+entity Transakcija copy OsnovnaPolja {
+    vreme date [notnull]
+    barkod integer [unique]
+    tipTransakcije integer
+    kolicina integer
+}
+
+entity Istorija copy OsnovnaPolja {
+    1..1 Transakcija transakcija
+}
+
+entity Magacin copy OsnovnaPolja {
+    1..* Korisnik korisnik
+    1..* Istorija istorija
+    1..* Sektor sektor
+}
+
+entity Sektor copy OsnovnaPolja {
+    lokacija string
+    1..* Slot slot
+}
+
+entity Slot copy OsnovnaPolja {
+    kapacitet integer
+    lokacija string
+}
+
+entity Proizvod copy OsnovnaPolja {
+    naziv string
+    barkod integer [unique]
+    tip string
+    brojnoStanje integer
+    kapacitet integer
+}

@@ -3,6 +3,7 @@ from os.path import exists, dirname, join
 
 from textx import metamodel_from_file
 from textx.exceptions import TextXSyntaxError
+from textx.exceptions import TextXSemanticError
 from models import Entity, Property, Relation, ONE_TO_MANY, MANY_TO_MANY, SimpleType
 from utils import get_current_time, find_pk_property, find_entity, write_to_file
 from mappings import constraints
@@ -42,7 +43,7 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
     # Build a model from input file
     try:
         model = mm.model_from_file(model_filename)
-    except TextXSyntaxError as error:
+    except (TextXSyntaxError, TextXSemanticError) as error:
         print('Compilation failed...')
         print(error)
         return

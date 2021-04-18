@@ -10,8 +10,9 @@ def find_pk_property(properties):
     fields that are going to be primary keys of the tables they are in.
     """
     for prop in properties:
-        if 'pk' in prop.constraints.constraints:
-            return prop
+        if prop.constraints:
+            if 'pk' in prop.constraints.constraints:
+                return prop
 
 def find_entity(name, entities):
     """
