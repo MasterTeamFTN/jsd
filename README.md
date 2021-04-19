@@ -10,22 +10,31 @@ Clanovi tima:
 
 ## Uputstvo za koriscenje
 
+Prvo je potrebno instalirati generator koda i textX na sledeci nacin:
 ```
 $ git clone https://github.com/MasterTeamFTN/jsd.git
-$ cd jsd
 $ python -m venv env
 $ source env/bin/activate
-$ pip install -r requirements.txt
-$ cd sql_generator
-$ python main.py -srcSg ./input-file.sg -sql ./out/db.sql -dot ./out/er.dot
+$ pip install textx\[dev\]
+$ pip install -e jsd
 ```
 
-Parametri za pokretanje ```main.py```:
-- ```-srcSg``` - specificira gde se nalazi izvorni .sg fajl
-- ```-sql``` - specificira gde da se sacuva generisana .sql skripta 
-- ```-dot``` - specificira gde da se sacuva generisani .dot fajl
-- ```--dot-only``` - generisanje samo .dot fajla
-- ```--sql-only``` - generisanje samo .sql fajla
+Nakon uspesne instalacije proveriti da li su jezik i generatori koda 
+prepoznati od strane textX-a sa:
+```
+$ textx list-languages
+$ textx list-generators
+```
+
+Generator je sada spreman za koriscenje, potrebno ga je pokrenuti navodjenjem
+ulaznog ```.sg``` fajla i ciljnog izlaznog fajla (```.dot``` ili ```.sql```)
+```
+$ textx generate path/to/myfile.sg --target sql
+```
+ili
+```
+$ textx generate path/to/myfile.sg --target dot
+```
 
 ## Specifikacija
 
