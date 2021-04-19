@@ -1,37 +1,48 @@
+import os
 from os import mkdir
 from os.path import exists, dirname, join
 
-from textx import metamodel_from_file
-from textx.exceptions import TextXSyntaxError
+import click
+from textx import metamodel_from_file, generator
 from textx.exceptions import TextXSemanticError
-from models import Entity, Property, Relation, ONE_TO_MANY, MANY_TO_MANY, SimpleType
-from utils import get_current_time, find_pk_property, find_entity, write_to_file
-from mappings import constraints
-from validators import check_duplicate_constraints, check_multiple_entity_names, check_multiple_pk, check_pk_exists, check_multiple_property_name
-from command_line import CommandLine
+from textx.exceptions import TextXSyntaxError
 
-from relations_manager import manage_relations
-from template_engine import init_template_engine
-from mappings import get_type
-from properties_manager import copy_properties, extends_properties, fix_entity_order
+from .command_line import CommandLine
+from .mappings import constraints
+from .mappings import get_type
+from .models import Entity, Property, SimpleType
+from .properties_manager import copy_properties, extends_properties, fix_entity_order
+from .relations_manager import manage_relations
+from .template_engine import init_template_engine
+from .utils import get_current_time, write_to_file
+from .validators import check_duplicate_constraints, check_multiple_entity_names, check_multiple_pk, check_pk_exists, \
+    check_multiple_property_name
 
 this_folder = dirname(__file__)
 databases = ['mysql', 'postgresql']
+from textx import LanguageDesc
+
 
 def get_mm():
     """
     Builds and returns a meta-model for our language.
     """
     type_builtins = {
-            'integer': SimpleType(None, 'integer'),
-            'string': SimpleType(None, 'string'),
-            'float': SimpleType(None, 'float')
+        'integer': SimpleType(None, 'integer'),
+        'string': SimpleType(None, 'string'),
+        'float': SimpleType(None, 'float')
     }
     return metamodel_from_file(join(this_folder, 'grammars', 'grammar.tx'), classes=[SimpleType],
-                                    builtins=type_builtins)
+                               builtins=type_builtins)
 
 
-def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, debug=False):
+jsd_lang = LanguageDesc('jsd_language',
+                        pattern='*.sg',
+                        description='Entity-relationship language',
+                        metamodel=get_mm)
+
+
+def main(model_filename):
     # Instantiate meta-model
     mm = get_mm()
 
@@ -102,7 +113,6 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
             if hasattr(structure, 'extends'):
                 extends_properties(entity, structure, entities, database_name)
 
-
     # Validate constraints
     status, entity, prop = check_duplicate_constraints(entities)
     if status:
@@ -117,8 +127,22 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
     # Fix entity order to generate valid sql script
     entities = fix_entity_order(entities)
 
-    # Generate SQL code
-    if not dot_only:
+    return entities, database_name
+
+@generator('jsd_language', 'sql')
+def sql_generator(metamodel, model, output_path, overwrite, debug, **custom_args):
+    "Generates sql script from sg file."
+    input_file = model._tx_filename
+
+    base_dir = output_path if output_path else os.path.dirname(input_file)
+    base_name, _ = os.path.splitext(os.path.basename(input_file))
+    output_file = os.path.abspath(
+        os.path.join(base_dir, "{}.{}".format(base_name, 'sql'))
+    )
+
+    if overwrite or not os.path.exists(output_file):
+        click.echo('-> {}'.format(output_file))
+        entities, database_name = main(input_file)
         sql_template = init_template_engine(this_folder, 'sql_create.template', database_name)
 
         data = sql_template.render(
@@ -127,10 +151,27 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
             time=get_current_time()
         )
 
-        write_to_file(sql_output_file, data)
+        write_to_file(output_file, data)
+        print('Successful compilation')
+        print(f'SQL Script generated at: {output_file}')
+    else:
+        click.echo('-- Skipping: {}'.format(output_file))
 
-    # Generate dot
-    if not sql_only:
+
+@generator('jsd_language', 'dot')
+def dot_generator(metamodel, model, output_path, overwrite, debug, **custom_args):
+    "Generates dot file from sg file."
+    input_file = model._tx_filename
+
+    base_dir = output_path if output_path else os.path.dirname(input_file)
+    base_name, _ = os.path.splitext(os.path.basename(input_file))
+    output_file = os.path.abspath(
+        os.path.join(base_dir, "{}.{}".format(base_name, 'dot'))
+    )
+
+    if overwrite or not os.path.exists(output_file):
+        click.echo('-> {}'.format(output_file))
+        entities, database_name = main(input_file)
         dot_template = init_template_engine(this_folder, 'dot_create.template', database_name)
 
         data = dot_template.render(
@@ -139,12 +180,12 @@ def main(model_filename, sql_output_file, dot_output_file, dot_only, sql_only, d
             time=get_current_time()
         )
 
-        write_to_file(dot_output_file, data)
+        write_to_file(output_file, data)
+        print('Successful compilation')
+        print(f'ER diagram generated at: {output_file}')
 
-    print('Successful compilation')
-    print(f'SQL Script generated at: {sql_output_file}')
-    print(f'ER diagram generated at: {dot_output_file}')
+        click.echo('   To convert to png run "dot -Tpng -O {}"'
+                   .format(os.path.basename(output_file)))
+    else:
+        click.echo('-- Skipping: {}'.format(output_file))
 
-if __name__ == '__main__':
-    app = CommandLine()
-    main(app.args.sourceFile, app.args.sqlFile, app.args.dotFile, app.args.dotOnly, app.args.sqlOnly)

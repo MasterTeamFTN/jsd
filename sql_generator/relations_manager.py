@@ -1,6 +1,6 @@
-from models import Entity, Property, Relation, ONE_TO_MANY, MANY_TO_MANY, ONE_TO_ONE
-from utils import get_current_time, find_pk_property, find_entity
-from mappings import get_type
+from .models import Entity, Relation, ONE_TO_MANY, MANY_TO_MANY, ONE_TO_ONE
+from .utils import find_pk_property, find_entity
+from .mappings import get_type
 
 def manage_relations(structure, entities, database_name):
     '''

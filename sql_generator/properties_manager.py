@@ -1,7 +1,6 @@
-from utils import get_current_time, find_pk_property, find_entity
-from models import Entity, Property, Relation, ONE_TO_ONE, MANY_TO_MANY, ONE_TO_MANY
-from validators import  check_multiple_entity_names, check_multiple_property_name
-from mappings import constraints, get_type
+from .utils import get_current_time, find_pk_property, find_entity
+from .models import Entity, Property, Relation, ONE_TO_ONE, MANY_TO_MANY, ONE_TO_MANY
+from .mappings import constraints, get_type
 
 def copy_properties(entity):
     """

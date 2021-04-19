@@ -1,5 +1,5 @@
 from os.path import dirname, join
-from utils import str2bool
+from .utils import str2bool
 import argparse
 
 
