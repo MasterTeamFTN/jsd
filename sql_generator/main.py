@@ -7,7 +7,6 @@ from textx import metamodel_from_file, generator
 from textx.exceptions import TextXSemanticError
 from textx.exceptions import TextXSyntaxError
 
-from .command_line import CommandLine
 from .mappings import constraints
 from .mappings import get_type
 from .models import Entity, Property, SimpleType
@@ -32,14 +31,10 @@ def get_mm():
         'string': SimpleType(None, 'string'),
         'float': SimpleType(None, 'float')
     }
-    return metamodel_from_file(join(this_folder, 'grammars', 'grammar.tx'), classes=[SimpleType],
+    return metamodel_from_file(join(this_folder, 'grammar.tx'), classes=[SimpleType],
                                builtins=type_builtins)
 
 
-jsd_lang = LanguageDesc('jsd_language',
-                        pattern='*.sg',
-                        description='Entity-relationship language',
-                        metamodel=get_mm)
 
 
 def main(model_filename):
@@ -143,7 +138,7 @@ def sql_generator(metamodel, model, output_path, overwrite, debug, **custom_args
     if overwrite or not os.path.exists(output_file):
         click.echo('-> {}'.format(output_file))
         entities, database_name = main(input_file)
-        sql_template = init_template_engine(this_folder, 'sql_create.template', database_name)
+        sql_template = init_template_engine(this_folder, 'sql_create.template')
 
         data = sql_template.render(
             entities=entities,
@@ -172,7 +167,7 @@ def dot_generator(metamodel, model, output_path, overwrite, debug, **custom_args
     if overwrite or not os.path.exists(output_file):
         click.echo('-> {}'.format(output_file))
         entities, database_name = main(input_file)
-        dot_template = init_template_engine(this_folder, 'dot_create.template', database_name)
+        dot_template = init_template_engine(this_folder, 'dot_create.template')
 
         data = dot_template.render(
             entities=entities,
@@ -188,4 +183,9 @@ def dot_generator(metamodel, model, output_path, overwrite, debug, **custom_args
                    .format(os.path.basename(output_file)))
     else:
         click.echo('-- Skipping: {}'.format(output_file))
+
+jsd_lang = LanguageDesc('jsd_language',
+                        pattern='*.sg',
+                        description='Entity-relationship language',
+                        metamodel=get_mm)
 

@@ -15,7 +15,6 @@ Prvo je potrebno instalirati generator koda i textX na sledeci nacin:
 $ git clone https://github.com/MasterTeamFTN/jsd.git
 $ python -m venv env
 $ source env/bin/activate
-$ pip install textx\[dev\]
 $ pip install -e jsd
 ```
 

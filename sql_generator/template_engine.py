@@ -1,7 +1,7 @@
 from os.path import join
 import jinja2
 
-def init_template_engine(path, template_name, database_name):
+def init_template_engine(path, template_name):
     """
     Initialize jinja template engine
     """
@@ -12,6 +12,4 @@ def init_template_engine(path, template_name, database_name):
     )
 
     # Load template
-    template_path = join('templates', template_name)
-    # return jinja_env.get_template(template_path)
-    return jinja_env.get_template('templates/' + template_name)
+    return jinja_env.get_template(template_name)

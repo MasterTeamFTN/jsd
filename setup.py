@@ -6,12 +6,16 @@ setup(
     author='Boris Sulicenko, Janko Ljubic, Nikolina Petrovic',
     author_email='boris.sulicenko@uns.ac.rs',
     packages=find_packages(),
+    package_data={
+        '': ['*.tx', '*.template']
+    },
     license='MIT',
     description='DSL that is used to generate SQL script and ER diagram',
     long_description=open('README.md').read(),
-    install_required=[
+    install_requires=[
         'textX==2.3.0',
-        'Jinja2==2.11.2'
+        'Jinja2==2.11.2',
+        'textX-dev==0.1.5'
     ],
     entry_points={
         'textx_languages': [

@@ -1,4 +1,5 @@
-database=sql
+database=mysql
+type varchar
 
 fields MyFields {
     hello varchar [unique]
@@ -7,13 +8,13 @@ fields MyFields {
 
 entity Fakultet copy MyFields {
     naziv varchar [pk]
-    godina_osnivanja number [unique notnull]
+    godina_osnivanja integer [unique notnull]
     grad varchar [notnull]
 }
 
 entity Predmet {
     naziv varchar [pk]
-    broj_bodova number [notnull]
+    broj_bodova integer [notnull]
 }
 
 entity Student {

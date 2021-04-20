@@ -1,0 +1,67 @@
+// Root rule
+// Every program must have config line to specify database name
+// and list of structures (entities or fields)
+Program:
+    config=Config
+    structures+=Structure
+;
+
+
+// Config part - here user needs to specify what database he wants to use
+Config:
+    'database=' db_name=ID
+;
+
+Structure:
+    CustomType | SimpleType | Entity | Field
+;
+
+Entity:
+    'entity' name=ID ('extends' extends=[Entity])? ('copy' copy=[Field])? '{'
+        properties+=Property
+    '}'
+;
+
+Field:
+    'fields' name=ID '{'
+        properties+=Property
+    '}'
+;
+SimpleType:
+  'type' name=ID
+;
+
+Type:
+  SimpleType | CustomType
+;
+
+CustomType:
+  'type' name=ID '="' value=ID '"'
+;
+
+Property:
+    name=ID type=[Type] constraints=PropertyConstraints? |
+    OneToOne oneToOne=[Entity] name=ID |
+    OneToMany oneToMany=[Entity] name=ID |
+    ManyToMany manyToMany=[Entity]
+;
+
+OneToOne:   '1..1';
+OneToMany:  '1..*';
+ManyToMany: '*..*';
+
+PropertyConstraints:
+    '[' constraints+=Constraint ']'
+;
+
+Constraint:
+    PrimaryKeyConstraint | NotNullConstraint | UniqueConstraint
+;
+
+PrimaryKeyConstraint: 'pk';
+NotNullConstraint:    'notnull';
+UniqueConstraint:     'unique';
+
+Comment:
+  /\/\/.*$/
+;
